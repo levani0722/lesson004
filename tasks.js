@@ -25,17 +25,26 @@ function cityOfUser(user){
 
 function copyObj(obj){
     function newObj(obj){
+        if(Array.isArray(obj)){
+            return [...obj];
+        }
         return {...obj};
     }
     const secObj=newObj(obj);
     function copyNest(secObj){
-        for (const key in secObj ){
+        if (Array.isArray(secObj)){
+            secObj.forEach((value,index)=>{
+                Array.isArray(value)?secObj[index]=newObj(value):0;
+                copyNest(secObj[index]);
+            })
+        }
+        for (const key in secObj){
             if(typeof secObj[key] === 'object' && secObj[key]!==null){
                 let nest=newObj(secObj[key]);
                 delete secObj[key];
                 secObj[key]=nest;
                 copyNest(secObj[key]);
-            } 
+            }
         }
     }
     copyNest(secObj)
